@@ -21,7 +21,5 @@ def send_test_email(to_email: str):
     return resend.Emails.send(params)
 
 if __name__ == "__main__":
-    # IMPORTANT:
-    # In Resend Test Mode, only your own email works.
-    result = send_test_email("huseynm103@gmail.com")
+    result = send_test_email("huseynm103@gmail.com") # sample email in the brackets
     print(result)
