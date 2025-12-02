@@ -13,7 +13,7 @@ if not resend.api_key:
 
 def send_test_email(to_email: str):
     params = {
-        "from": "onboarding@resend.dev",   # testing domain
+        "from": "E-Commerce Club <no-reply@e-commerceclubada.xyz>",   # from website's domain
         "to": [to_email],
         "subject": "Test Email",
         "html": "<strong>It works!</strong>"
@@ -23,5 +23,5 @@ def send_test_email(to_email: str):
 if __name__ == "__main__":
     # IMPORTANT:
     # In Resend Test Mode, only your own email works.
-    result = send_test_email("gmmm3890@gmail.com")
+    result = send_test_email("huseynm103@gmail.com")
     print(result)
