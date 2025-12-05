@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, ForwardRef
+from app.schemas.event import EventResponse
 
 class RegistrationCreate(BaseModel):
     """Schema for registering for an event"""
