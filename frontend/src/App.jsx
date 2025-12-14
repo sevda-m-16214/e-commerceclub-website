@@ -4,6 +4,12 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import AboutUs from './pages/AboutUs';
 import EventCourses from './pages/EventCourses';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import EventDetailPage from './pages/EventDetailPage';
+import AdminRoute from './components/AdminRoute'; // <-- NEW Import
+import AdminDashboard from './pages/AdminDashboard'; // <-- NEW Page (We'll create this next)
+import EventRegistrationPage from './pages/EventRegistrationPage';
 
 function App() {
   return (
@@ -17,6 +23,16 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/events-courses" element={<EventCourses />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/events/:id" element={<EventDetailPage />} />
+          <Route path="/register/event/:id" element={<EventRegistrationPage />} />
+
+          <Route 
+            path="/admin" 
+            element={<AdminRoute element={AdminDashboard} />} // <-- NEW Protected Route
+          />
+          
         </Routes>
       </main>
 
@@ -27,3 +43,5 @@ function App() {
 }
 
 export default App;
+
+

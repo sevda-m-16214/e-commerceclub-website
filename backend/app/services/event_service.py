@@ -13,19 +13,30 @@ class EventService:
     @staticmethod
     def create_event(db: Session, event_data: EventCreate, admin_id: int) -> Event:
         """Create a new event"""
+        
+        # 💥 NEW LOGIC: Extract date and time from the single datetime object 💥
+        full_event_datetime: datetime = event_data.event_date
+        event_date_only = full_event_datetime.date() # Get date object for event_date column
+        event_time_only = full_event_datetime.strftime("%H:%M:%S") # Get time string for event_time column
+
         event = Event(
             title=event_data.title,
             description=event_data.description,
-            event_date=event_data.event_date,
-            event_time=event_data.event_time,
+            
+            # Use the split parts for the SQLAlchemy model
+            event_date=event_date_only,           # Pass date object
+            event_time=event_time_only,           # Pass time string
+            
             location=event_data.location,
             capacity=event_data.capacity,
             registration_deadline=event_data.registration_deadline,
             image_url=event_data.image_url,
+            creator_id=admin_id,
         )
         
         db.add(event)
-        db.commit()
+        # The hang should resolve here as all model requirements are met
+        db.commit() 
         db.refresh(event)
         return event
     
