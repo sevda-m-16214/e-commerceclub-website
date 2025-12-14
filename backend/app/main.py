@@ -18,7 +18,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     # ⚠️ TEMPORARY FOR TESTING ONLY ⚠️
-    allow_origins=["*"], 
+    allow_origins=["https://www.e-commerceclubada.xyz"], 
     allow_credentials=True, # Note: Setting allow_origins="*" AND allow_credentials=True 
                             # is technically invalid per the CORS spec, but it's okay 
                             # for a quick test to see if ANY connection is possible.
