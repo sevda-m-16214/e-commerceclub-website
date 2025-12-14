@@ -6,7 +6,7 @@ class Announcement(Base):
     __tablename__ = "announcements"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, nullable=False)
+    title = Column(String(length=255), nullable=False)
     content = Column(Text, nullable=False)
     author_id = Column(Integer, nullable=False)
     is_published = Column(Boolean, default=True)
@@ -17,7 +17,7 @@ class PageContent(Base):
     __tablename__ = "page_content"
 
     id = Column(Integer, primary_key=True, index=True)
-    page_name = Column(String, unique=True, nullable=False)
+    page_name = Column(String(length=255), unique=True, nullable=False)
     content = Column(Text, nullable=False)
     updated_by = Column(Integer, nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
