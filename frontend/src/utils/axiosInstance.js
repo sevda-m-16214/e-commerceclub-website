@@ -3,6 +3,7 @@
 import axios from 'axios';
 
 const API_BASE_URL = 
+    process.env.VITE_PUBLIC_API_URL ||
     // 1. Check for the Next.js/Vercel public prefix
     process.env.NEXT_PUBLIC_API_URL || 
     // 2. Check for the standard Create React App public prefix
@@ -43,3 +44,4 @@ axiosInstance.interceptors.request.use(
 
 
 export default axiosInstance;
+
