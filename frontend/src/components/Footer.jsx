@@ -4,7 +4,7 @@ function Footer() {
       <div className="max-w-6xl mx-auto px-4">
         <p className="text-sm">Contact info</p>
         <p>Email: ecommerce@ada.edu.az</p>
-        <p>ADA University, Baku</p>
+        <p>ADA University - Baku</p>
       </div>
     </footer>
   );
