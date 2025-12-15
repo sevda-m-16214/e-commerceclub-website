@@ -43,6 +43,21 @@ async def register_for_event(
 
     return registration
 
+
+@router.get("/my-registrations", response_model=List[RegistrationResponse])
+async def get_my_registrations(
+    include_cancelled: bool = False,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get current user's registrations"""
+    registrations = RegistrationService.get_user_registrations(
+        db,
+        user_id=current_user.id,
+        include_cancelled=include_cancelled
+    )
+    return registrations
+
 @router.delete("/{registration_id}", status_code=status.HTTP_200_OK)
 async def cancel_registration(
     registration_id: int,
