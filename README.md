@@ -18,29 +18,235 @@ University E-Commerce Club management platform with event registration, admin pa
 | Huseyn | Worked on hosting and domain configuration, integrated email sending using Resend, and provided frontend and backend support|
 | Shahd | Helped with testing the system and full-stack support, identifying issues and assisting with fixes across frontend and backend.|
 
+## Installation & Local Development Guide
 
-## Project Timeline
-Target Completion: December 15, 2024
+This guide explains how to set up and run the **E-Commerce Club Website** project locally for development and testing.
+
+---
+
+## Prerequisites
+
+Make sure the following tools are installed on your system:
+
+- **Python** 3.12+
+- **Node.js** 18+
+- **npm** or **yarn**
+- **Git**
+- **SQLite** (default for local development)
+- (Optional) **PostgreSQL** for production-like testing
+
+---
+
+## Backend Setup (FastAPI)
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-org/e-commerceclub-website.git
+cd e-commerceclub-website/backend
+````
+
+---
+
+### 2. Create and Activate Virtual Environment
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+> On Windows:
+
+```powershell
+venv\Scripts\activate
+```
+
+---
+
+### 3. Install Backend Dependencies
+
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+---
+
+### 4. Environment Variables
+
+Create a `.env` file inside the `backend/` directory:
+
+```env
+DATABASE_URL=sqlite:///./ecommerce_club.db
+SECRET_KEY=super-secret-key
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+EMAIL_FROM=no-reply@ecommerceclub.com
+EMAIL_PROVIDER=resend
+RESEND_API_KEY=your_resend_api_key
+FRONTEND_URL=http://localhost:5173
+```
+
+
+### 5. Database Initialization (Alembic)
+
+```bash
+alembic upgrade head
+```
+
+This will create all required tables.
+
+
+### 6. Run the Backend Server
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Backend will be available at:
+
+```text
+http://127.0.0.1:8000
+```
+
+Interactive API docs:
+
+* Swagger UI: `http://127.0.0.1:8000/docs`
+* ReDoc: `http://127.0.0.1:8000/redoc`
+
+---
+
+## Frontend Setup (React + Vite)
+
+### 1. Navigate to Frontend Directory
+
+```bash
+cd ../frontend
+```
+
+
+
+### 2. Install Frontend Dependencies
+
+```bash
+npm install
+```
+
+or
+
+```bash
+yarn install
+```
+
+--
+
+### 3. Frontend Environment Variables
+
+Create a `.env` file inside `frontend/`:
+
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
+
+---
+
+### 4. Run Frontend Development Server
+
+```bash
+npm run dev
+```
+
+Frontend will be available at:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## Running Tests
+
+### Backend Tests (pytest)
+
+```bash
+pytest
+```
+
+Or run a specific test file:
+
+```bash
+pytest tests/test_profile_email_change.py -v
+```
+
+---
+
+## Common Development Commands
+
+| Command                                        | Description             |
+| ---------------------------------------------- | ----------------------- |
+| `uvicorn app.main:app --reload`                | Run backend server      |
+| `alembic revision --autogenerate -m "message"` | Create DB migration     |
+| `alembic upgrade head`                         | Apply migrations        |
+| `pytest`                                       | Run all backend tests   |
+| `npm run dev`                                  | Run frontend dev server |
+
+---
+
+## Production Notes
+
+* Use **PostgreSQL** instead of SQLite
+* Run behind a reverse proxy (NGINX)
+* Set `DEBUG=False`
+* Rotate JWT secrets regularly
+* Enable HTTPS at the infrastructure level
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+**ModuleNotFoundError**
+
+```bash
+pip install -r requirements.txt
+```
+
+**Database errors**
+
+```bash
+alembic upgrade head
+```
+
+**JWT errors**
+
+* Verify `SECRET_KEY` consistency
+* Ensure token expiration has not passed
+
+---
+
+## Project Structure Reference
+
+```text
+backend/
+├── app/
+├── alembic/
+├── tests/
+├── requirements.txt
+├── alembic.ini
+├── run.py
+```
+
+---
+
+You're now ready to run the E-Commerce Club Website locally 🚀
+
+```
+```
 
 ## Important Links
 - [Project Requirements](./docs/requirements.md)
-- [API Documentation] (Coming soon)
-
-
-
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-
 
 ## Authentication API
 
@@ -154,3 +360,166 @@ Authorization: Bearer {admin_token}
 GET /api/events/{event_id}/participants
 Authorization: Bearer {admin_token}
 ```
+
+## Profile Management Enhancements
+
+The profile module was extended to support safer account management and verified email updates, improving user experience and data integrity.
+
+---
+
+## Account Deletion with Confirmation
+
+### Overview
+Account deletion now requires **explicit user confirmation** to prevent accidental or malicious deletions.
+
+### Endpoint
+```http
+DELETE /api/profile/me
+Authorization: Bearer <token>
+````
+
+### Request Body
+
+```json
+{
+  "confirm": true
+}
+```
+
+### Behavior
+
+* If `confirm` is `false`, the request is rejected
+* If `confirm` is `true`, the user account is permanently deleted
+* Associated user data is removed from the database
+
+### Response
+
+```http
+204 No Content
+```
+
+---
+
+## Email Change with Verification Flow
+
+### Overview
+
+Changing a user’s email address requires **email verification** to ensure ownership of the new email and prevent unauthorized changes.
+
+---
+
+### Step 1: Request Email Change
+
+```http
+POST /api/profile/change-email
+Authorization: Bearer <token>
+```
+
+#### Request Body
+
+```json
+{
+  "new_email": "newemail@example.com"
+}
+```
+
+#### Behavior
+
+* Generates a signed JWT verification token
+* Sends a verification email to the new address
+* Email is **not updated immediately**
+
+#### Response
+
+```json
+{
+  "message": "Verification email sent"
+}
+```
+
+---
+
+### Step 2: Confirm Email Change
+
+```http
+GET /api/profile/confirm-email-change?token=<verification_token>
+```
+
+#### Behavior
+
+* Validates the token
+* Ensures token type is `email_change`
+* Extracts:
+
+  * User ID
+  * New email address
+* Updates the user’s email only if the token is valid
+
+#### Response
+
+```json
+{
+  "message": "Email updated successfully"
+}
+```
+
+---
+
+## Email Verification Token Structure
+
+Email verification tokens are implemented using JWT with a dedicated payload:
+
+```json
+{
+  "sub": "user_id",
+  "new_email": "newemail@example.com",
+  "type": "email_change",
+  "exp": "expiration_timestamp"
+}
+```
+
+This design ensures:
+
+* Tokens are single-purpose
+* Tokens expire automatically
+* Email changes cannot be forged or replayed
+
+---
+
+## Profile API Summary
+
+### Protected Profile Endpoints
+
+| Method | Endpoint                            | Description                      |
+| ------ | ----------------------------------- | -------------------------------- |
+| GET    | `/api/profile/me`                   | Get current user profile         |
+| PUT    | `/api/profile/me`                   | Update profile details           |
+| PUT    | `/api/profile/change-password`      | Change account password          |
+| POST   | `/api/profile/change-email`         | Request email change             |
+| GET    | `/api/profile/confirm-email-change` | Confirm email change             |
+| DELETE | `/api/profile/me`                   | Delete account with confirmation |
+
+---
+
+## Testing Coverage
+
+The following features are fully covered by automated tests using **pytest** and FastAPI’s `TestClient`:
+
+* Email change request flow
+* Email change confirmation
+* Invalid or expired email tokens
+* Account deletion confirmation logic
+* Unauthorized access handling
+
+---
+
+## Implementation Notes
+
+* Business logic is isolated in the service layer (`profile_service.py`)
+* Routes remain thin and declarative
+* Email verification uses stateless JWT tokens
+* All changes are backward compatible with existing users
+
+```
+```
+
