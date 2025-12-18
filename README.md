@@ -238,9 +238,6 @@ backend/
 ├── run.py
 ```
 
----
-
-You're now ready to run the E-Commerce Club Website locally 🚀
 
 ```
 ```
